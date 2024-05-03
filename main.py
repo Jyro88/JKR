@@ -30,29 +30,29 @@ goal_state = [1, 2, 3, 4, 5, 6, 7, 8, 0]
 problem = Problem(initial_state, goal_state)
 
 if algorithm_choice == 1:
-    solution_node = uniform_cost_search(problem)
+    solution_node, frontier_size= uniform_cost_search(problem)
 elif algorithm_choice == 2:
-    solution_node = a_star_misplaced(problem)
+    solution_node, frontier_size = a_star_misplaced(problem)
 # elif algorithm_choice == 3:
 #     solution_node = a_star_euclidean(problem)
 else:
     print("Invalid choice of algorithm.")
     exit()
 
-if solution_node:
+if solution_node and frontier_size:
     # UCS Trace
     if algorithm_choice == 1:
-        solution_path = solution_node.path()
-        for i, node in enumerate(solution_path):
+        for i, node in enumerate(solution_node):
             print(f"State {i+1}:")
             print_state(node.state)
             print("")
             # If an action was taken, print the direction the blank was moved and the total cost of the expanded path
             if node.action:
                 print(f"Action taken: {node.action}")
-                print(f"Total cost: {node.cost}.")
+                print(f"Total cost: {node.cost}")
                 print("")
 
+        print(f"Max queue size: {frontier_size}")
         print("Goal reached!")
     
     # A* Misplaced Tile Trace
@@ -67,6 +67,7 @@ if solution_node:
         for i, node in enumerate(solution_node[1:], start=1):
             print("The best state to expand with g(n) =", node.cost, "and h(n) =", node.heuristic)  # Print cost and heuristic value
             print("Expanding this node...\n")
+            print("Frontier size:", frontier_size)
             print_state(node.state)  # Print state
             print("Action taken:", node.action)  # Print action taken
             print("")  # Add a blank line for readability

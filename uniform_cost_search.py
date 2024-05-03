@@ -8,9 +8,13 @@ def uniform_cost_search(problem):
     explored = set()
     # Add the initial state node to the frontier with priority 0
     heapq.heappush(frontier, (0, Node(problem.initial_state)))
+    # Initialize a variable to store the maximum queue size
+    max_queue_size = 0
     
     # Continue searching until the frontier is empty
     while frontier:
+        # Update the maximum queue size if the current size exceeds the previous maximum
+        max_queue_size = max(max_queue_size, len(frontier))
         # Pop the node with the lowest cost from the frontier
         priority, node = heapq.heappop(frontier)
         # Extract the state from the node
@@ -18,8 +22,8 @@ def uniform_cost_search(problem):
         
         # Check if the goal state is reached
         if problem.goal_test(state):
-            # Return the goal node if found
-            return node
+            # Return the solution path and the maximum queue size
+            return node.path(), max_queue_size
         
         # Mark the current state as explored
         explored.add(tuple(state))
@@ -39,4 +43,4 @@ def uniform_cost_search(problem):
                 heapq.heappush(frontier, (child_cost, child_node))
     
     # Return None if no solution is found
-    return None
+    return None, max_queue_size

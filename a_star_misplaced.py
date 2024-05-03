@@ -2,7 +2,6 @@ import heapq
 from node import Node
 
 def a_star_misplaced(problem):
-
     # Counts how many tiles are misplaced by comparing each value of the problem state to the goal state
     def misplaced_tiles(state):
         misplaced = 0
@@ -18,6 +17,7 @@ def a_star_misplaced(problem):
     # Enqueue the initial state node into the frontier with a priority of 0 + h(n)
     initial_node = Node(problem.initial_state, cost=0, heuristic=misplaced_tiles(problem.initial_state))
     heapq.heappush(frontier, initial_node)
+    frontier_size = 1  # Initialize frontier size
     
     # Continue searching until the frontier is empty
     while frontier:
@@ -32,7 +32,7 @@ def a_star_misplaced(problem):
             while node:
                 solution_path.append(node)
                 node = node.parent
-            return list(reversed(solution_path))
+            return solution_path, frontier_size
         
         # Mark the current state as explored
         explored.add(tuple(state))
@@ -51,6 +51,7 @@ def a_star_misplaced(problem):
             if tuple(child_state) not in explored:
                 # Enqueue the child node into the frontier with priority = total cost + heuristic value
                 heapq.heappush(frontier, child_node)
+                frontier_size += 1  # Increment frontier size
     
     # Return None if no solution is found
-    return None
+    return None, frontier_size
