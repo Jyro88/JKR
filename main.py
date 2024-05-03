@@ -40,16 +40,17 @@ else:
     exit()
 
 if solution_node:
-    solution_path = solution_node.path()
-    print("Expanding state:")
-    print_state(initial_state)
-    print("The best state to expand with g(n) = {} and h(n) = {} is...".format(solution_path[-1].cost, solution_node.cost - solution_path[-1].cost))
-    print_state(solution_path[-1].state)
-    print("Expanding this node...")
-    for i in range(1, len(solution_path)):
-        print("The best state to expand with g(n) = {} and h(n) = {} is...".format(solution_path[i].cost, solution_node.cost - solution_path[i].cost))
-        print_state(solution_path[i].state)
-        print("Expanding this node...")
-    print("Goal!!!")
+    if algorithm_choice == 1:
+        solution_path = solution_node.path()
+        for i, node in enumerate(solution_path):
+            print(f"State {i+1}:")
+            print_state(node.state)
+            print("")
+            if node.action:
+                print(f"Action taken: {node.action}")
+                print(f"Total cost: {node.cost}.")
+                print("")
+
+        print("Goal reached!")
 else:
     print("No solution found.")
