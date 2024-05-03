@@ -1,6 +1,6 @@
 from problem import Problem
 from uniform_cost_search import uniform_cost_search
-# from a_star_misplaced import a_star_misplaced
+from a_star_misplaced import a_star_misplaced
 # from a_star_euclidean import a_star_euclidean
 
 def print_state(state):
@@ -31,8 +31,8 @@ problem = Problem(initial_state, goal_state)
 
 if algorithm_choice == 1:
     solution_node = uniform_cost_search(problem)
-# elif algorithm_choice == 2:
-#     solution_node = a_star_misplaced(problem)
+elif algorithm_choice == 2:
+    solution_node = a_star_misplaced(problem)
 # elif algorithm_choice == 3:
 #     solution_node = a_star_euclidean(problem)
 else:
@@ -40,17 +40,37 @@ else:
     exit()
 
 if solution_node:
+    # UCS Trace
     if algorithm_choice == 1:
         solution_path = solution_node.path()
         for i, node in enumerate(solution_path):
             print(f"State {i+1}:")
             print_state(node.state)
             print("")
+            # If an action was taken, print the direction the blank was moved and the total cost of the expanded path
             if node.action:
                 print(f"Action taken: {node.action}")
                 print(f"Total cost: {node.cost}.")
                 print("")
 
         print("Goal reached!")
+    
+    # A* Misplaced Tile Trace
+    if algorithm_choice == 2:
+        # Print the trace for A* with Misplaced Tile heuristic
+        print("Expanding state")
+        print_state(initial_state)  # Print initial state
+        print("The best state to expand with g(n) = 0 and h(n) =", solution_node[0].heuristic)  # Print initial heuristic cost
+        print("Expanding this node...\n")
+        
+        # Print subsequent states and actions along the solution path
+        for i, node in enumerate(solution_node[1:], start=1):
+            print("The best state to expand with g(n) =", node.cost, "and h(n) =", node.heuristic)  # Print cost and heuristic value
+            print("Expanding this node...\n")
+            print_state(node.state)  # Print state
+            print("Action taken:", node.action)  # Print action taken
+            print("")  # Add a blank line for readability
+        print("Goal reached!")
+
 else:
     print("No solution found.")

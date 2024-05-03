@@ -36,3 +36,8 @@ class Problem:
 
     def step_cost(self, state, action):
         return 1
+    
+    def heuristic(self, state):
+        # Calculate the heuristic cost (number of misplaced tiles)
+        misplaced = sum(1 for s, g in zip(state, self.goal_state) if s != g)
+        return misplaced
