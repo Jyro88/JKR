@@ -1,6 +1,7 @@
 from problem import Problem
 from uniform_cost_search import uniform_cost_search
 from a_star_misplaced import a_star_misplaced
+import time
 # from a_star_euclidean import a_star_euclidean
 
 def print_state(state):
@@ -25,6 +26,9 @@ print("1. Uniform Cost Search")
 print("2. A* with the Misplaced Tile heuristic")
 print("3. A* with the Euclidean distance heuristic")
 algorithm_choice = int(input())
+
+# CPU TIME STARTS
+start_cpu_time = time.process_time()
 
 goal_state = [1, 2, 3, 4, 5, 6, 7, 8, 0]
 problem = Problem(initial_state, goal_state)
@@ -54,6 +58,9 @@ if solution_node:
                 print("")
 
         print("Goal reached!")
+        end_cpu_time = time.process_time()
+        cpu_time_used = end_cpu_time - start_cpu_time
+        print(f"CPU time used: {cpu_time_used} seconds")
     
     # A* Misplaced Tile Trace
     if algorithm_choice == 2:
@@ -71,6 +78,9 @@ if solution_node:
             print("Action taken:", node.action)  # Print action taken
             print("")  # Add a blank line for readability
         print("Goal reached!")
+        end_cpu_time = time.process_time()
+        cpu_time_used = end_cpu_time - start_cpu_time
+        print(f"CPU time used: {cpu_time_used} seconds")
 
 else:
     print("No solution found.")
