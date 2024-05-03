@@ -74,4 +74,5 @@ if solution_node and frontier_size:
         print("Goal reached!")
 
 else:
+    print(f"Max queue size: {frontier_size}")
     print("No solution found.")
