@@ -17,22 +17,28 @@ def a_star_misplaced(problem):
     # Enqueue the initial state node into the frontier with a priority of 0 + h(n)
     initial_node = Node(problem.initial_state, cost=0, heuristic=misplaced_tiles(problem.initial_state))
     heapq.heappush(frontier, initial_node)
-    frontier_size = 1  # Initialize frontier size
+    # Initialize frontier size
+    frontier_size = 1
+    # Initialize number of nodes expanded
+    nodes_expanded = 0
     
-    # Continue searching until the frontier is empty
+    # Continue searching until the frontier is empty or the goal state is found
     while frontier:
         # Dequeue the node with the lowest cost + heuristic value from the frontier
         node = heapq.heappop(frontier)
         state = node.state
+        # Increment nodes expanded
+        nodes_expanded += 1
         
         # Check if the current state is the goal state
         if state == problem.goal_state:
-            # Return the solution path if found
+            # Return the solution path, frontier size, and number of expanded nodes if found
             solution_path = []
-            while node:
+            while node.parent:
                 solution_path.append(node)
                 node = node.parent
-            return solution_path, frontier_size
+            solution_path.append(node)  # Append initial node
+            return list(reversed(solution_path)), frontier_size, nodes_expanded
         
         # Mark the current state as explored
         explored.add(tuple(state))
@@ -44,14 +50,15 @@ def a_star_misplaced(problem):
             cost = node.cost + problem.step_cost(state, action)
             # Calculate the heuristic value for the child state
             heuristic_value = misplaced_tiles(child_state)
-            # Create a child node
+            # Create a child node and store the action
             child_node = Node(child_state, parent=node, action=action, cost=cost, heuristic=heuristic_value)
             
             # Check if the child state has not been explored
             if tuple(child_state) not in explored:
                 # Enqueue the child node into the frontier with priority = total cost + heuristic value
                 heapq.heappush(frontier, child_node)
-                frontier_size += 1  # Increment frontier size
+                # Increment frontier size
+                frontier_size += 1
     
-    # Return None if no solution is found
-    return None, frontier_size
+    # Return None if no solution is found, along with frontier size and number of expanded nodes
+    return None, frontier_size, nodes_expanded
