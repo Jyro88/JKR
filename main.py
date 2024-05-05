@@ -1,6 +1,7 @@
 from problem import Problem
 from uniform_cost_search import uniform_cost_search
 from a_star_misplaced import a_star_misplaced
+from a_star_euclidean import a_star_euclidean
 import time
 
 # prints board state in a row by row format
@@ -37,8 +38,8 @@ if algorithm_choice == 1:
     solution_node, frontier_size, nodes_expanded = uniform_cost_search(problem)
 elif algorithm_choice == 2:
     solution_node, frontier_size, nodes_expanded = a_star_misplaced(problem)
-# elif algorithm_choice == 3:
-#     solution_node = a_star_euclidean(problem)
+elif algorithm_choice == 3:
+     solution_node = a_star_euclidean(problem)
 else:
     print("Invalid choice of algorithm.")
     exit()
@@ -85,6 +86,35 @@ if solution_node:
         end_cpu_time = time.process_time()
         cpu_time_used = end_cpu_time - start_cpu_time
         print(f"CPU time used: {cpu_time_used} seconds")
+    # 3. A* with the Euclidean distance heuristic code:
+    if algorithm_choice == 3:
+        from a_star_euclidean import a_star_euclidean
+        start_cpu_time = time.process_time()
+        solution_node, frontier_size, nodes_expanded = a_star_euclidean(problem)
+
+        if solution_node:
+            # Print the path to the goal
+            current_node = solution_node
+            path = []
+            while current_node.parent is not None:
+                path.append(current_node)
+                current_node = current_node.parent
+            path.reverse()
+
+            # Print the path and states
+            for node in path:
+                print_state(node.state)
+                print("Action taken:", node.action)
+                print("")
+
+            # Print metrics
+            print("Goal reached!")
+            print("Maximum queue size:", frontier_size)
+            print("Number of nodes expanded:", nodes_expanded)
+            end_cpu_time = time.process_time()
+            cpu_time_used = end_cpu_time - start_cpu_time
+            print(f"CPU time used: {cpu_time_used} seconds")
+
 
 else:
     print(f"Max queue size: {frontier_size}")
