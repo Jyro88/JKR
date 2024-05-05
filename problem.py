@@ -20,7 +20,7 @@ class Problem:
         new_state = state[:] # Copy the state to the new state
         blank_index = new_state.index(0)
 
-        # Perform one of the 4 operators based on the action parameter given
+        # Swap blank based on action
         if action == 'up':
             new_state[blank_index], new_state[blank_index - 3] = new_state[blank_index - 3], new_state[blank_index]
         elif action == 'down':

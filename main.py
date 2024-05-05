@@ -3,6 +3,7 @@ from uniform_cost_search import uniform_cost_search
 from a_star_misplaced import a_star_misplaced
 import time
 
+# prints board state in a row by row format
 def print_state(state):
     for i in range(0, 9, 3):
         print(" ".join(map(str, state[i:i+3])))
@@ -55,7 +56,7 @@ if solution_node:
                 print(f"Action taken: {node.action}")
                 print(f"Total cost: {node.cost}.")
                 print("")
-        # Print additional information
+        # Print metrics
         print("Goal reached!")
         print("Maximum queue size:", frontier_size)
         print("Number of nodes expanded:", nodes_expanded)
@@ -65,29 +66,25 @@ if solution_node:
     
     # A* Misplaced Tile Trace
     if algorithm_choice == 2:
-        if solution_node:
-            # Print the trace for A* with Misplaced Tile heuristic
-            print("Expanding state")
-            print_state(initial_state)  # Print initial state
-            print("The best state to expand with g(n) = 0 and h(n) =", solution_node[0].heuristic)  # Print initial heuristic cost
+        print_state(initial_state)  # Print initial state
+        print("The best state to expand with g(n) = 0 and h(n) =", solution_node[0].heuristic)  # Print initial heuristic cost
+        print("Expanding this node...\n")
+
+        # Print subsequent states and actions along the solution path
+        for i, node in enumerate(solution_node[1:], start=1):
+            print("The best state to expand with g(n) =", node.cost, "and h(n) =", node.heuristic)  # Print cost and heuristic value
             print("Expanding this node...\n")
-
-            # Print subsequent states and actions along the solution path
-            for i, node in enumerate(solution_node[1:], start=1):
-                print("The best state to expand with g(n) =", node.cost, "and h(n) =", node.heuristic)  # Print cost and heuristic value
-                print("Expanding this node...\n")
-                print_state(node.state)  # Print state
-                print("Action taken:", node.action)  # Print action taken
-                print("")  # Add a blank line for readability
-
-            print("Goal reached!")
-            print("Maximum queue size:", frontier_size)
-            print("Number of nodes expanded:", nodes_expanded)
-            end_cpu_time = time.process_time()
-            cpu_time_used = end_cpu_time - start_cpu_time
-            print(f"CPU time used: {cpu_time_used} seconds")
-        else:
-            print("No solution found.")
+            print_state(node.state)
+            print("Action taken:", node.action)
+            print("") 
+        
+        # Print metrics
+        print("Goal reached!")
+        print("Maximum queue size:", frontier_size)
+        print("Number of nodes expanded:", nodes_expanded)
+        end_cpu_time = time.process_time()
+        cpu_time_used = end_cpu_time - start_cpu_time
+        print(f"CPU time used: {cpu_time_used} seconds")
 
 else:
     print(f"Max queue size: {frontier_size}")

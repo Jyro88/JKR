@@ -10,7 +10,6 @@ class Node:
     def path(self):
         node, path_back = self, []
 
-        # Traverse the path from the current node back to the root (initial state)
         while node:
             # Append the current node to the list
             path_back.append(node)
