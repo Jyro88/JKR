@@ -39,7 +39,7 @@ if algorithm_choice == 1:
 elif algorithm_choice == 2:
     solution_node, frontier_size, nodes_expanded = a_star_misplaced(problem)
 elif algorithm_choice == 3:
-     solution_node = a_star_euclidean(problem)
+     solution_node, frontier_size, nodes_expanded = a_star_euclidean(problem)
 else:
     print("Invalid choice of algorithm.")
     exit()
@@ -86,34 +86,28 @@ if solution_node:
         end_cpu_time = time.process_time()
         cpu_time_used = end_cpu_time - start_cpu_time
         print(f"CPU time used: {cpu_time_used} seconds")
+
     # 3. A* with the Euclidean distance heuristic code:
     if algorithm_choice == 3:
-        from a_star_euclidean import a_star_euclidean
-        start_cpu_time = time.process_time()
-        solution_node, frontier_size, nodes_expanded = a_star_euclidean(problem)
+        print_state(initial_state)  # Print initial state
+        print("The best state to expand with g(n) = 0 and h(n) =", solution_node[0].heuristic)  # Print initial heuristic cost
+        print("Expanding this node...\n")
 
-        if solution_node:
-            # Print the path to the goal
-            current_node = solution_node
-            path = []
-            while current_node.parent is not None:
-                path.append(current_node)
-                current_node = current_node.parent
-            path.reverse()
-
-            # Print the path and states
-            for node in path:
-                print_state(node.state)
-                print("Action taken:", node.action)
-                print("")
-
-            # Print metrics
-            print("Goal reached!")
-            print("Maximum queue size:", frontier_size)
-            print("Number of nodes expanded:", nodes_expanded)
-            end_cpu_time = time.process_time()
-            cpu_time_used = end_cpu_time - start_cpu_time
-            print(f"CPU time used: {cpu_time_used} seconds")
+        # Print subsequent states and actions along the solution path
+        for i, node in enumerate(solution_node[1:], start=1):
+            print("The best state to expand with g(n) =", node.cost, "and h(n) =", node.heuristic)  # Print cost and heuristic value
+            print("Expanding this node...\n")
+            print_state(node.state)
+            print("Action taken:", node.action)
+            print("") 
+        
+        # Print metrics
+        print("Goal reached!")
+        print("Maximum queue size:", frontier_size)
+        print("Number of nodes expanded:", nodes_expanded)
+        end_cpu_time = time.process_time()
+        cpu_time_used = end_cpu_time - start_cpu_time
+        print(f"CPU time used: {cpu_time_used} seconds")
 
 
 else:

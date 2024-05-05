@@ -1,44 +1,45 @@
+import heapq
+from node import Node
 import math
-import time
-from node import Node  # Assuming the node definition is in node.py
-from problem import Problem  # Assuming the problem setup is in problem.py
-
-def euclidean_distance(state1, state2):
-    return math.sqrt(sum((s1 - s2) ** 2 for s1, s2 in zip(state1, state2)))
 
 def a_star_euclidean(problem):
-    start_node = Node(state=problem.initial_state)
-    frontier = [start_node]  # Typically, a priority queue should be used
-    frontier_size = 1  # Track maximum size of the frontier
-    nodes_expanded = 0  # Track number of nodes expanded
+    initial_node = Node(state=problem.initial_state)
+    if problem.goal_test(initial_node.state):
+        return initial_node.path(), 1, 1
+    
+    frontier = []
+    heapq.heappush(frontier, (initial_node.cost + initial_node.heuristic, initial_node))  # Priority queue with (total_cost, node)
     explored = set()
-    
+    max_queue_size = 1
+
     while frontier:
-        # Updating the maximum frontier size
-        frontier_size = max(frontier_size, len(frontier))
+        total_cost, node = heapq.heappop(frontier)
+        explored.add(tuple(node.state))
 
-        # Sorting to get the node with the lowest f(n) = g(n) + h(n)
-        frontier.sort(key=lambda node: node.cost + euclidean_distance(node.state, problem.goal_state))
-        current_node = frontier.pop(0)
+        if problem.goal_test(node.state):
+            return node.path(), max_queue_size, len(explored)
 
-        nodes_expanded += 1
-        
-        if problem.goal_test(current_node.state):
-            return current_node, frontier_size, nodes_expanded
-        
-        explored.add(tuple(current_node.state))
-        
-        for action in problem.actions(current_node.state):
-            child = current_node.child_node(problem, action)
-            if tuple(child.state) not in explored:
-                if child not in frontier:
-                    frontier.append(child)
-                elif child in frontier:
-                    # Find the node and possibly update path_cost
-                    index = frontier.index(child)
-                    if child.cost < frontier[index].cost:
-                        frontier[index] = child
-    
-    return None  # If no solution found
+        for action in problem.actions(node.state):
+            child_state = problem.result(node.state, action)
+            child_cost = node.cost + problem.step_cost(node.state, action)
+            child_heuristic = heuristic_euclidean(child_state, problem.goal_state)  # Calculate heuristic for child state
+            child_node = Node(state=child_state, parent=node, action=action, cost=child_cost, heuristic=child_heuristic)
 
+            if tuple(child_state) not in explored:
+                heapq.heappush(frontier, (child_node.cost + child_node.heuristic, child_node))
+                explored.add(tuple(child_state))
+                max_queue_size = max(max_queue_size, len(frontier))
 
+    return None, max_queue_size, len(explored)
+
+def heuristic_euclidean(state, goal_state):
+    # Euclidean distance heuristic calculates the distance between each tile in the current state
+    # and its goal position, then sums these distances.
+    distance = 0
+    for i in range(len(state)):
+        if state[i] != 0:  # Exclude the blank tile
+            current_row, current_col = i // 3, i % 3
+            goal_index = goal_state.index(state[i])
+            goal_row, goal_col = goal_index // 3, goal_index % 3
+            distance += math.sqrt((current_row - goal_row) ** 2 + (current_col - goal_col) ** 2)
+    return distance
