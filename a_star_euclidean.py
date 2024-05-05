@@ -2,13 +2,14 @@ import heapq
 from node import Node
 import math
 
+# Literally same code as the other a* but with a different hueristic function
 def a_star_euclidean(problem):
     initial_node = Node(state=problem.initial_state)
     if problem.goal_test(initial_node.state):
         return initial_node.path(), 1, 1
     
     frontier = []
-    heapq.heappush(frontier, (initial_node.cost + initial_node.heuristic, initial_node))  # Priority queue with (total_cost, node)
+    heapq.heappush(frontier, (initial_node.cost + initial_node.heuristic, initial_node))  
     explored = set()
     max_queue_size = 1
 
@@ -22,7 +23,7 @@ def a_star_euclidean(problem):
         for action in problem.actions(node.state):
             child_state = problem.result(node.state, action)
             child_cost = node.cost + problem.step_cost(node.state, action)
-            child_heuristic = heuristic_euclidean(child_state, problem.goal_state)  # Calculate heuristic for child state
+            child_heuristic = heuristic_euclidean(child_state, problem.goal_state)  
             child_node = Node(state=child_state, parent=node, action=action, cost=child_cost, heuristic=child_heuristic)
 
             if tuple(child_state) not in explored:
