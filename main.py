@@ -14,7 +14,7 @@ print("Type '1' to use a default puzzle, or '2' to enter your own puzzle:")
 choice = int(input())
 
 if choice == 1:
-    initial_state = [1, 2, 3, 4, 8, 0, 7, 6, 5]
+    initial_state = [1, 2, 3, 4, 5, 6, 8, 7, 0]
 else:
     print("Enter your puzzle, use a zero to represent the blank")
     initial_state = []
@@ -114,3 +114,6 @@ else:
     print(f"Max queue size: {frontier_size}")
     print("Number of nodes expanded:", nodes_expanded)
     print("No solution found.")
+    end_cpu_time = time.process_time()
+    cpu_time_used = end_cpu_time - start_cpu_time
+    print(f"CPU time used: {cpu_time_used} seconds")
