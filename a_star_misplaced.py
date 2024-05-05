@@ -1,64 +1,36 @@
 import heapq
 from node import Node
 
-def a_star_misplaced(problem):
-    # Counts how many tiles are misplaced by comparing each value of the problem state to the goal state
-    def misplaced_tiles(state):
-        misplaced = 0
-        for i in range(len(state)):
-            if state[i] != problem.goal_state[i]:
-                misplaced += 1
-        return misplaced
-
-    # Initialize an empty frontier (priority queue) to store nodes to be explored
+def a_star_misplaced(problem):    
+    initial_node = Node(state=problem.initial_state)
+    if problem.goal_test(initial_node.state):
+        return initial_node.path(), 1, 1
+    
     frontier = []
-    # Initialize a set to store explored states
+    heapq.heappush(frontier, (initial_node.cost + initial_node.heuristic, initial_node))  # Priority queue with (total_cost, node)
     explored = set()
-    # Enqueue the initial state node into the frontier with a priority of 0 + h(n)
-    initial_node = Node(problem.initial_state, cost=0, heuristic=misplaced_tiles(problem.initial_state))
-    heapq.heappush(frontier, initial_node)
-    # Initialize frontier size
-    frontier_size = 1
-    # Initialize number of nodes expanded
-    nodes_expanded = 0
-    
-    # Continue searching until the frontier is empty or the goal state is found
+    max_queue_size = 1
+
     while frontier:
-        # Dequeue the node with the lowest cost + heuristic value from the frontier
-        node = heapq.heappop(frontier)
-        state = node.state
-        # Increment nodes expanded
-        nodes_expanded += 1
-        
-        # Check if the current state is the goal state
-        if state == problem.goal_state:
-            # Return the solution path, frontier size, and number of expanded nodes if found
-            solution_path = []
-            while node.parent:
-                solution_path.append(node)
-                node = node.parent
-            solution_path.append(node)  # Append initial node
-            return list(reversed(solution_path)), frontier_size, nodes_expanded
-        
-        # Mark the current state as explored
-        explored.add(tuple(state))
-        
-        # Generate child states for the current state
-        for action in problem.actions(state):
-            child_state = problem.result(state, action)
-            # Calculate the cost of reaching the child state
-            cost = node.cost + problem.step_cost(state, action)
-            # Calculate the heuristic value for the child state
-            heuristic_value = misplaced_tiles(child_state)
-            # Create a child node and store the action
-            child_node = Node(child_state, parent=node, action=action, cost=cost, heuristic=heuristic_value)
-            
-            # Check if the child state has not been explored
+        total_cost, node = heapq.heappop(frontier)
+        explored.add(tuple(node.state))
+
+        if problem.goal_test(node.state):
+            return node.path(), max_queue_size, len(explored)
+
+        for action in problem.actions(node.state):
+            child_state = problem.result(node.state, action)
+            child_cost = node.cost + problem.step_cost(node.state, action)
+            child_heuristic = heuristic_misplaced_tiles(child_state, problem.goal_state)  # Calculate heuristic for child state
+            child_node = Node(state=child_state, parent=node, action=action, cost=child_cost, heuristic=child_heuristic)
+
             if tuple(child_state) not in explored:
-                # Enqueue the child node into the frontier with priority = total cost + heuristic value
-                heapq.heappush(frontier, child_node)
-                # Increment frontier size
-                frontier_size += 1
-    
-    # Return None if no solution is found, along with frontier size and number of expanded nodes
-    return None, frontier_size, nodes_expanded
+                heapq.heappush(frontier, (child_node.cost + child_node.heuristic, child_node))
+                explored.add(tuple(child_state))
+                max_queue_size = max(max_queue_size, len(frontier))
+
+    return None, max_queue_size, len(explored)
+
+def heuristic_misplaced_tiles(state, goal_state):
+    misplaced = sum(1 for s, g in zip(state, goal_state) if s != g and s != 0)  # Exclude the blank tile from count
+    return misplaced
